@@ -109,7 +109,6 @@ class FullscreenActivity : AppCompatActivity() {
 
             }
 
-
         }
 
         // Upon interacting with UI controls, delay any scheduled hide()
@@ -134,10 +133,14 @@ class FullscreenActivity : AppCompatActivity() {
             if(row == 0 && column == 0){
 
                 //search right
-                val listRight = searchRight(position)
+                val listRight = searchRight(position, column)
 
                 //search below
                 val listBelow = searchBelow(position)
+
+
+                Log.v(TAG, listRight.toString())
+                Log.v(TAG, listBelow.toString())
 
                 Log.d(TAG, listRight.toString())
                 Log.d(TAG, listBelow.toString())
@@ -145,33 +148,36 @@ class FullscreenActivity : AppCompatActivity() {
                 var area = 0
                 if(listRight.size != 0 && listBelow.size != 0)
                     area = searchRightBelowQuadrant(listRight, listBelow)
+
                 setArea(area)
             }
 
             else if(row == 0 && column == 14){
 
                 //search left
-                val listLeft = searchLeft(position)
+                val listLeft = searchLeft(position, column)
                 //search below
                 val listBelow = searchBelow(position)
 
-
-                Log.d(TAG, listLeft.toString())
-                Log.d(TAG, listBelow.toString())
+                Log.v(TAG, listLeft.toString())
+                Log.v(TAG, listBelow.toString())
 
                 var area = 0
                 if(listLeft.size!= 0 && listBelow.size != 0)
                     area = searchLeftBelowQuadrant(listLeft, listBelow)
+                Log.d(TAG, "area = "+area)
                 setArea(area)
 
             }
             else if( row == 14 && column == 0){
 
                 //search right
-                val listRight = searchRight(position)
+                val listRight = searchRight(position, column)
                 //search above
                 val listAbove = searchAbove(position)
                 var area = 0
+
+
 
                 Log.d(TAG, listRight.toString())
                 Log.d(TAG, listAbove.toString())
@@ -183,9 +189,13 @@ class FullscreenActivity : AppCompatActivity() {
             }
             else{
                 //search left
-                val listLeft = searchLeft(position)
+                val listLeft = searchLeft(position, column)
                 //search above
                 val listAbove = searchAbove(position)
+
+                Log.v(TAG, listLeft.toString())
+                Log.v(TAG, listAbove.toString())
+
 
                 Log.d(TAG, listLeft.toString())
                 Log.d(TAG, listAbove.toString())
@@ -201,11 +211,15 @@ class FullscreenActivity : AppCompatActivity() {
                 var areaRightBelow = 0
                 var areaLeftBelow = 0
                 // search right
-                val listRight = searchRight(position)
+                val listRight = searchRight(position, column)
                 // search left
-                val listLeft = searchLeft(position)
+                val listLeft = searchLeft(position, column)
                 // search below
                 val listBelow = searchBelow(position)
+
+                Log.v(TAG, listLeft.toString())
+                Log.v(TAG, listRight.toString())
+                Log.v(TAG, listBelow.toString())
 
                 if(listRight.size != 0 && listBelow.size != 0)
                     areaRightBelow = searchRightBelowQuadrant(listRight, listBelow)
@@ -225,11 +239,16 @@ class FullscreenActivity : AppCompatActivity() {
                 var areaRightAbove = 0
                 var areaRightBelow = 0
                 // search right
-                val listRight = searchRight(position)
+                val listRight = searchRight(position, column)
                 // search above
                 val listAbove = searchAbove(position)
                 // search below
                 val listBelow = searchBelow(position)
+
+
+                Log.v(TAG, listRight.toString())
+                Log.v(TAG, listAbove.toString())
+                Log.v(TAG, listBelow.toString())
 
                 if(listRight.size != 0 && listAbove.size != 0)
                     areaRightAbove = searchRightAboveQuadrant(listRight, listAbove)
@@ -248,11 +267,15 @@ class FullscreenActivity : AppCompatActivity() {
                 var areaLeftAbove = 0
                 var areaRightAbove = 0
                 // search left
-                val listLeft = searchLeft(position)
+                val listLeft = searchLeft(position, column)
                 // search right
-                val listRight = searchRight(position)
+                val listRight = searchRight(position, column)
                 // search above
                 val listAbove = searchAbove(position)
+
+                Log.v(TAG, listLeft.toString())
+                Log.v(TAG, listRight.toString())
+                Log.v(TAG, listAbove.toString())
 
 
                 if(listLeft.size != 0 && listAbove.size != 0)
@@ -268,11 +291,15 @@ class FullscreenActivity : AppCompatActivity() {
                 var areaLeftBelow = 0
 
                 // search left
-                val listLeft = searchLeft(position)
+                val listLeft = searchLeft(position, column)
                 // search above
                 val listAbove = searchAbove(position)
                 // search below
                 val listBelow = searchBelow(position)
+
+                Log.v(TAG, listLeft.toString())
+                Log.v(TAG, listBelow.toString())
+                Log.v(TAG, listAbove.toString())
 
                 if(listLeft.size != 0 && listAbove.size != 0)
                     areaLeftAbove = searchLeftAboveQuadrant(listLeft, listAbove)
@@ -286,9 +313,9 @@ class FullscreenActivity : AppCompatActivity() {
         }
         else{
             // search left
-            val listLeft= searchLeft(position)
+            val listLeft= searchLeft(position, column)
             // search right
-            val listRight = searchRight(position)
+            val listRight = searchRight(position, column)
             // search above
             val listAbove = searchAbove(position)
             // search below
@@ -343,119 +370,139 @@ class FullscreenActivity : AppCompatActivity() {
 
     private fun searchLeftAboveQuadrant(listLeft: ArrayList<Int>, listAbove: ArrayList<Int>): Int {
         // search left-above quadrant
-        val rowSize = listLeft.size
-        val columnSize = listAbove.size
+        val rowCount = listAbove.size
+        val columnCount = listLeft.size
+        var area = 0
 
         var height = 0
         var length = 0
-        for (i in 0 until columnSize) {
+        for (i in 0 until rowCount) {
+            height = i
             var curPos = listAbove[i]
-            for (j in 0 .. rowSize) {
+            for (j in 0 .. columnCount) {
+                length = j
                 val view = gvFlip.getChildAt(curPos)
                 if (view?.tag == "on") {
                     view.setBackgroundColor(resources.getColor(R.color.red_300))
                     curPos -= 1
+                    val tempArea = (length+1) * (height+2)
+                    if(area < tempArea)
+                        area = tempArea
                 } else {
                     break
                 }
-                length = j
+
             }
-            height = i
+
         }
-        return (length + 2) * (height + 2)
+        return area
 
     }
 
     private fun searchLeftBelowQuadrant(listLeft: ArrayList<Int>, listBelow:ArrayList<Int>):Int{
         // search left-above quadrant
-        val rowSize = listLeft.size
-        val columnSize = listBelow.size
+        val rowCount = listBelow.size
+        val columnCount = listLeft.size
 
-        var height = 0
-        var length = 0
-        for( i in 0 until columnSize){
+        var area = 0
+        var height:Int
+        var length:Int
+
+        for( i in 0 until rowCount){
             var curPos = listBelow[i]
-            for (j in 0 .. rowSize){
+            height = i
+            for (j in 0 .. columnCount){
+                length = j
                 val view = gvFlip.getChildAt(curPos)
                 if(view?.tag == "on"){
                     view.setBackgroundColor(resources.getColor(R.color.red_300))
                     curPos -= 1
+                    val tempArea = (length+1) * (height+2)
+                    if(area < tempArea)
+                        area = tempArea
                 }
                 else{
                     break
                 }
-                length = j
             }
-            height = i
         }
-        return (length + 2) * (height + 2)
+        return area
 
     }
 
     private fun searchRightAboveQuadrant(listRight:ArrayList<Int>, listAbove: ArrayList<Int>) :Int{
         // search right-above quadrant
-        val rowSize = listRight.size
-        val columnSize = listAbove.size
+        val rowCount = listAbove.size
+        val columnCount = listRight.size
 
+        var area = 0
         var height = 0
         var length = 0
-        for (i in 0 until columnSize) {
+        for (i in 0 until rowCount) {
+            height = i
             var curPos = listAbove[i]
-            for (j in 0 .. rowSize) {
+            for (j in 0 .. columnCount) {
                 val view = gvFlip.getChildAt(curPos)
+                length = j
                 if (view?.tag == "on") {
                     view.setBackgroundColor(resources.getColor(R.color.red_300))
                     curPos += 1
+                    val tempArea = (length+1) * (height+2)
+                    if(area < tempArea)
+                        area = tempArea
                 } else {
                     break
                 }
-                length = j
+
             }
-            height = i
         }
-        return (length + 2) * (height + 2)
+
+        return area
 
     }
 
     private fun searchRightBelowQuadrant(listRight: ArrayList<Int>, listBelow: ArrayList<Int>):Int{
         // search right-below quadrant
-        val rowSize = listRight.size
-        val columnSize = listBelow.size
+        val rowCount = listBelow.size
+        val columnCount = listRight.size
 
         var height = 0
         var length = 0
-        for( i in 0 until columnSize){
+        var area = 0
+        for( i in 0 until rowCount){
+            height  = i
             var curPos = listBelow[i]
-            for (j in 0 .. rowSize){
+            for (j in 0 .. columnCount){
+                length = j
                 val view = gvFlip.getChildAt(curPos)
                 if(view?.tag == "on"){
-                    Log.v(TAG, " view "+ curPos)
                     view.setBackgroundColor(resources.getColor(R.color.red_300))
                     curPos += 1
-
+                    val tempArea = (length+1) * (height+2)
+                    if(area < tempArea)
+                        area = tempArea
                 }
                 else{
                     break
                 }
-                length = j
             }
-            height  = i
         }
-        return (length+2) * (height+2)
+        return area
 
     }
 
-    private fun searchLeft(position: Int):ArrayList<Int>{
+    private fun searchLeft(position: Int, column: Int):ArrayList<Int>{
         val arrayList = ArrayList<Int>()
         //search left
         var rw = position - 1
-
+        var colmn = column - 1
         while(true){
             val view = gvFlip.getChildAt(rw)
-            if(view?.tag == "on"){
+            if(view?.tag == "on" && colmn > -1){
                 //view.setBackgroundColor(resources.getColor(R.color.red_300))
                 arrayList.add(rw)
                 rw -= 1
+                colmn -= 1
 
             }
             else{
@@ -465,18 +512,19 @@ class FullscreenActivity : AppCompatActivity() {
         return arrayList
     }
 
-    private fun searchRight(position: Int):ArrayList<Int>{
+    private fun searchRight(position: Int, column: Int):ArrayList<Int>{
         val arrayList = ArrayList<Int>()
         //search right
-        var rw = position + 1
+        var curPos = position + 1
+        var colmn = column +1
 
         while(true){
-            val view = gvFlip.getChildAt(rw)
-            if(view?.tag == "on"){
+            val view = gvFlip.getChildAt(curPos)
+            if(view?.tag == "on" && colmn < 15){
                 //view.setBackgroundColor(resources.getColor(R.color.red_300))
-                arrayList.add(rw)
-                rw += 1
-
+                arrayList.add(curPos)
+                curPos += 1
+                colmn += 1
             }
             else{
                 break
