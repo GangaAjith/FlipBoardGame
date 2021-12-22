@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
@@ -18,6 +17,8 @@ import com.gangaown.flipboardgame.adapter.FlipViewAdapter
 import com.gangaown.flipboardgame.databinding.ActivityFullscreenBinding
 import com.gangaown.flipboardgame.rectangle.LargestRectangleSearch
 import com.gangaown.flipboardgame.util.Constants
+import com.gangaown.flipboardgame.util.Constants.COLUMN_SIZE
+import com.gangaown.flipboardgame.util.Constants.RAW_SIZE
 
 
 /**
@@ -138,22 +139,12 @@ class FlipBoardActivity : AppCompatActivity() {
 
     private fun setUpArrayList() {
         toggleArrayList = ArrayList()
-        for(i in 0 until Constants.COLUMN_SIZE){
-            for(j in 0 until Constants.RAW_SIZE){
+        for(i in 0 until COLUMN_SIZE){
+            for(j in 0 until RAW_SIZE){
                 toggleArrayList.add(0)
             }
         }
     }
-
-
-    private fun setArea(area:Int){
-        if(area > biggestRectangleArea){
-            biggestRectangleArea = area
-            binding.tvArea.text = biggestRectangleArea.toString()
-        }
-    }
-
-
 
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
