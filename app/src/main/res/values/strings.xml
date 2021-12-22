@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">FlipBoardGame</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="biggest_rectangle_is">Biggest Rectangle: </string>
+    <string name="exit_button">Exit Game</string>
+    <string name="biggest_rectangle_is">Biggest Rectangle:  </string>
+    <string name="exit_fullscreen_mode">Exit fullscreen mode</string>
+    <string name="enter_fullscreen_mode">Enter fullscreen mode</string>
 </resources>

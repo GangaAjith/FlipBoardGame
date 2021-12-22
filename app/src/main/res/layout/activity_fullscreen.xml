@@ -5,11 +5,17 @@
     android:layout_height="match_parent"
     android:background="?attr/fullscreenBackgroundColor"
     android:theme="@style/ThemeOverlay.FlipBoardGame.FullscreenContainer"
-    tools:context=".FullscreenActivity">
+    tools:context=".FlipBoardActivity">
 
-    <!-- The primary full-screen view. This can be replaced with whatever view
-         is needed to present your content, e.g. VideoView, SurfaceView,
-         TextureView, etc. -->
+
+    <!-- The primary full-screen view. -->
+    <Button
+        android:id="@+id/btn_mode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exit_fullscreen_mode"
+        android:layout_gravity="center|top"/>
+
     <GridView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -31,15 +37,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="25sp"
-        android:textColor="@color/white"
+        android:textColor="@color/red_300"
         android:layout_marginBottom="5dp"
+        android:fontFamily="sans-serif-condensed-medium"
         android:text="@string/biggest_rectangle_is" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/tvArea"
+        android:layout_marginStart="2dp"
         android:textSize="25sp"
-        android:textColor="@color/white"
+        android:textColor="@color/red_300"
         android:layout_marginBottom="5dp" />
 </LinearLayout>
 
@@ -61,12 +69,14 @@
             tools:ignore="UselessParent">
 
             <Button
-                android:id="@+id/dummy_button"
+                android:id="@+id/exit_btn"
                 style="?android:attr/buttonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/dummy_button" />
+                android:textStyle="bold"
+                android:textColor="@color/white"
+                android:text="@string/exit_button" />
 
         </LinearLayout>
     </FrameLayout>
