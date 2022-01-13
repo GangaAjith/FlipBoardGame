@@ -5,6 +5,7 @@ import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowInsets
@@ -12,6 +13,10 @@ import android.widget.AdapterView
 import android.widget.Button
 import android.widget.GridView
 import android.widget.LinearLayout
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.gangaown.flipboardgame.R
 import com.gangaown.flipboardgame.adapter.FlipViewAdapter
 import com.gangaown.flipboardgame.databinding.ActivityFullscreenBinding
@@ -24,13 +29,14 @@ import com.gangaown.flipboardgame.util.Constants.RAW_SIZE
 /**
  * Flip board game entry page
  */
-class FlipBoardActivity : AppCompatActivity() {
+class FlipBoardActivity : AppCompatActivity(), FlipViewAdapter.OnItemClickListener {
 
     private lateinit var binding: ActivityFullscreenBinding
-    private lateinit var gvFlip: GridView
+    private lateinit var rvFlip: RecyclerView
     private lateinit var btnMode: Button
     private lateinit var btnExit: Button
     private lateinit var fullscreenContentControls: LinearLayout
+    private lateinit var flipViewAdapter: FlipViewAdapter
 
     private lateinit var toggleArrayList: ArrayList<Int>
 
@@ -82,6 +88,20 @@ class FlipBoardActivity : AppCompatActivity() {
         false
     }
 
+    override fun onItemClick(position: Int) {
+        // set the background color to the clicked cell
+        if (toggleArrayList[position] == 1) {
+            toggleArrayList[position] = 0
+        } else{
+            toggleArrayList[position] = 1
+        }
+
+        flipViewAdapter.notifyItemChanged(position)
+        biggestRectangleArea = LargestRectangleSearch.findLargeRectangle(toggleArrayList,COLUMN_SIZE, RAW_SIZE)
+        binding.tvArea.text = biggestRectangleArea.toString()
+
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,35 +124,19 @@ class FlipBoardActivity : AppCompatActivity() {
 
 
         // Gridview binding
-        gvFlip = binding.gvFlip
+        rvFlip = binding.rvFlip
 
         // setup the gridview using BaseAdapter
         setUpArrayList()
 
-        val flipViewAdapter = FlipViewAdapter(this, toggleArrayList)
-        gvFlip.adapter = flipViewAdapter
-
-
-        // Handling the click on the gridview cells
-        gvFlip.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
-
-
-            // set the background color to the clicked cell
-            if (toggleArrayList[position] == 1) {
-
-                toggleArrayList[position] = 0
-                flipViewAdapter.notifyDataSetChanged()
-                biggestRectangleArea = LargestRectangleSearch.findLargeRectangle(toggleArrayList,Constants.COLUMN_SIZE, Constants.RAW_SIZE)
-                binding.tvArea.text = biggestRectangleArea.toString()
-
-            } else{
-                toggleArrayList[position] = 1
-                flipViewAdapter.notifyDataSetChanged()
-                biggestRectangleArea = LargestRectangleSearch.findLargeRectangle(toggleArrayList,Constants.COLUMN_SIZE, Constants.RAW_SIZE)
-                binding.tvArea.text = biggestRectangleArea.toString()
-            }
-
-        }
+        flipViewAdapter = FlipViewAdapter(this, toggleArrayList, this)
+        rvFlip.addItemDecoration(DividerItemDecoration(this,
+            DividerItemDecoration.HORIZONTAL))
+        rvFlip.addItemDecoration( DividerItemDecoration(this,
+            DividerItemDecoration.VERTICAL))
+        val gridLayout = GridLayoutManager(this, COLUMN_SIZE)
+        rvFlip.layoutManager = gridLayout
+        rvFlip.adapter = flipViewAdapter
 
         binding.exitBtn.setOnTouchListener(delayHideTouchListener)
     }
@@ -179,9 +183,9 @@ class FlipBoardActivity : AppCompatActivity() {
         binding.btnMode.text = resources.getString(R.string.enter_fullscreen_mode)
         // Show the system bar
         if (Build.VERSION.SDK_INT >= 30) {
-            gvFlip.windowInsetsController?.show(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
+            rvFlip.windowInsetsController?.show(WindowInsets.Type.statusBars() or WindowInsets.Type.navigationBars())
         } else {
-            gvFlip.systemUiVisibility =
+            rvFlip.systemUiVisibility =
                 View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or
                         View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         }
@@ -220,4 +224,6 @@ class FlipBoardActivity : AppCompatActivity() {
          */
         private const val UI_ANIMATION_DELAY = 300
     }
+
+
 }

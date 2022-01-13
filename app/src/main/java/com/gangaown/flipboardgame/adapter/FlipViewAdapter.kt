@@ -1,54 +1,66 @@
 package com.gangaown.flipboardgame.adapter
 
-import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
+import android.widget.ListView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.RecyclerView
 import com.gangaown.flipboardgame.R
 
 
-class FlipViewAdapter(private val context: Context, private val toggleStateArray: ArrayList<Int>)
-    :BaseAdapter() {
+class FlipViewAdapter(private val context: Context,
+                      private val toggleStateArray: ArrayList<Int>,
+                      private val listener: OnItemClickListener)
+    : RecyclerView.Adapter<FlipViewAdapter.FlipViewHolderClass> (){
 
-    private var layoutInflater:LayoutInflater? = null
 
-    override fun getCount(): Int {
-        return toggleStateArray.size
-    }
+     inner class FlipViewHolderClass(itemView:View):RecyclerView.ViewHolder(itemView), View.OnClickListener  {
 
-    override fun getItem(position: Int): Int {
-        return toggleStateArray[position]
-    }
+        private val tvPosition: TextView = itemView.findViewById(R.id.textView)
+
+         fun setData(curItem:Int){
+            if (curItem == 1){
+                itemView.background = ContextCompat.getDrawable(context, R.drawable.red_round_box)
+            } else {
+
+                itemView.background = ContextCompat.getDrawable(context,
+                    R.drawable.white_round_box)
+            }
+            tvPosition.text = adapterPosition.toString()
+            itemView.setOnClickListener(this)
+        }
+
+         override fun onClick(v: View?) {
+             listener.onItemClick(adapterPosition)
+         }
+     }
+
+     interface OnItemClickListener{
+         fun onItemClick(position: Int)
+     }
 
     override fun getItemId(position: Int): Long {
         return 0
     }
 
-    @SuppressLint("ViewHolder")
-    override fun getView(position: Int, view: View?, parent: ViewGroup?): View? {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FlipViewHolderClass {
+        val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = layoutInflater.inflate(R.layout.cell_item, parent, false)
+        return FlipViewHolderClass(view)
+    }
 
-        var convertView = view
+    override fun onBindViewHolder(holder: FlipViewHolderClass, position: Int) {
+        val curItem = toggleStateArray[position]
+        holder.setData(curItem)
+    }
 
-
-        layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        convertView = layoutInflater!!.inflate(R.layout.cell_item, null)
-        val textView = convertView.findViewById<TextView>(R.id.textView)
-
-        if (getItem(position)== 1){
-
-            convertView!!.background = ContextCompat.getDrawable(context, R.drawable.grey_round_box)
-        } else {
-
-            convertView!!.background = ContextCompat.getDrawable(context,
-                R.drawable.white_round_box)
-        }
-        textView.text = position.toString()
-
-        return convertView
+    override fun getItemCount(): Int {
+        return toggleStateArray.size
     }
 
 }
